@@ -20,10 +20,18 @@ export default function HomeScreen({navigation}) {
   }, [])
 
   function goToNike(reso) {
-    navigation.navigate('Nike',{
-      nameSocial: reso,
-      actionBadass: "roxer"
-    });
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Nike', 
+          params: {
+              nameSocial: reso,
+              actionBadass: "roxer"
+            }
+        }
+      ]
+    })
   }
   // {truc: 'twitter'} quand je cliquerai sur twitter
   // {truc: 'facebook'} quand je cliquerai sur facebook
@@ -44,7 +52,7 @@ export default function HomeScreen({navigation}) {
   
           renderItem={({item})=> (
             <ListItem bottomDivider 
-              onPress={() => navigation.navigate('PostDetails',{
+              onPress={() => navigation.reset('PostDetails',{
                 post: item
               })}>
             <ListItem.Content>
