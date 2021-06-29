@@ -2,9 +2,14 @@ import React, {useState, useEffect} from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import axios from 'axios';
 import { Avatar, ListItem, SocialIcon, Switch } from 'react-native-elements';
+import { useFonts } from 'expo-font';
 
 export default function HomeScreen({navigation}) {
   const [posts, setPosts] = useState([]);
+
+  let [fontsLoaded] = useFonts({
+    'Yellowtail': require('../assets/fonts/Yellowtail-Regular.ttf')
+  })
 
   useEffect(() => {
     axios.get('https://jsonplaceholder.typicode.com/posts')
@@ -23,34 +28,40 @@ export default function HomeScreen({navigation}) {
   // {truc: 'twitter'} quand je cliquerai sur twitter
   // {truc: 'facebook'} quand je cliquerai sur facebook
 
-  return (
-    <View style={styles.container}>
+  if(!fontsLoaded) {
+      return <View>Loading...</View>
+  }
+  else {
+    return (
+      <View style={styles.container}>
+  
+        <SocialIcon type='twitter' onPress={()=> goToNike('twitter')}/>
+        <SocialIcon type='facebook' onPress={() => goToNike('facebook')}/>
+  
+  
+        <FlatList
+          data={posts}
+  
+          renderItem={({item})=> (
+            <ListItem bottomDivider 
+              onPress={() => navigation.navigate('PostDetails',{
+                post: item
+              })}>
+            <ListItem.Content>
+              <ListItem.Title style={styles.title}>{item.title}</ListItem.Title>
+              <Switch value={false} />
+            </ListItem.Content>
+            <ListItem.Chevron />
+            </ListItem>)
+          }
+  
+          keyExtractor={item => item.id.toString()}
+        />
+      
+    </View>
+    )
+  }
 
-      <SocialIcon type='twitter' onPress={()=> goToNike('twitter')}/>
-      <SocialIcon type='facebook' onPress={() => goToNike('facebook')}/>
-
-
-      <FlatList
-        data={posts}
-
-        renderItem={({item})=> (
-          <ListItem bottomDivider 
-            onPress={() => navigation.navigate('PostDetails',{
-              post: item
-            })}>
-          <ListItem.Content>
-            <ListItem.Title>{item.title}</ListItem.Title>
-            <Switch value={false} />
-          </ListItem.Content>
-          <ListItem.Chevron />
-          </ListItem>)
-        }
-
-        keyExtractor={item => item.id.toString()}
-      />
-    
-  </View>
-  )
 }
 
 const styles = StyleSheet.create({
@@ -58,4 +69,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff'
   },
+  title: {
+    fontFamily: 'Yellowtail'
+  }
 });
